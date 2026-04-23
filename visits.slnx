@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="visits.api/visits.api.csproj" />
+  <Project Path="visits.models/visits.models.csproj" />
+  <Project Path="visits.tests/visits.tests.csproj" />
+</Solution>
