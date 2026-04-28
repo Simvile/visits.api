@@ -45,6 +45,35 @@ public class AppDbContext : IdentityDbContext<BaseUser, IdentityRole<Guid>, Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.Entity<Images>().ToTable("Images", "documents");
+
+        // ── Institutions ────────────────────────────────────────
+        builder.Entity<Institution>().ToTable("Institutions", "institutions");
+        builder.Entity<Campus>().ToTable("Campuses", "institutions");
+        builder.Entity<Address>().ToTable("Addresses", "institutions");
+
+        // ── Residences ──────────────────────────────────────────
+        builder.Entity<Residence>().ToTable("Residences", "residences");
+        builder.Entity<Room>().ToTable("Rooms", "residences");
+        builder.Entity<StudentRoom>().ToTable("StudentRooms", "residences");
+
+        // ── Visits ──────────────────────────────────────────────
+        builder.Entity<Visits>().ToTable("Visits", "visits");
+        builder.Entity<Visitor>().ToTable("Visitors", "visits");
+        builder.Entity<VisitorCode>().ToTable("VisitorCodes", "visits");
+
+        // ── Policies ────────────────────────────────────────────
+        builder.Entity<ResidenceAccessPolicy>().ToTable("ResidenceAccessPolicies", "policies");
+        builder.Entity<VisitTypePolicy>().ToTable("VisitTypePolicies", "policies");
+
+        // ── Users ───────────────────────────────────────────────
+        builder.Entity<Staff>().ToTable("Staff", "users");
+        builder.Entity<Student>().ToTable("Students", "users");
+
+        // ── Core ────────────────────────────────────────────────
+        builder.Entity<ClassificationValues>().ToTable("ClassificationValues", "core");
+        builder.Entity<RefreshToken>().ToTable("RefreshTokens", "core");
 
         // ── BaseUser ────────────────────────────────────────────
         builder.Entity<BaseUser>()
