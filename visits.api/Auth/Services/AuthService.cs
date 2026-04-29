@@ -162,7 +162,7 @@ public class AuthService( UserManager<BaseUser> userManager, AppDbContext contex
     #region Private Methods
     private async Task<AuthResponse> GenerateAuthResponseAsync(BaseUser user)
     {
-        var (accessToken, jwtId, accessTokenExpiry) = GenerateJwtToken(user);
+        var (accessToken, jwtId, accessTokenExpiry) = await GenerateJwtToken(user);
         var (refreshToken, refreshTokenExpiry) = await GenerateRefreshTokenAsync(user, jwtId);
 
         return new AuthResponse
@@ -181,21 +181,26 @@ public class AuthService( UserManager<BaseUser> userManager, AppDbContext contex
         };
     }
 
-    private (string token, string jwtId, DateTime expiry) GenerateJwtToken(BaseUser user)
+    private async Task<(string token, string jwtId, DateTime expiry)> GenerateJwtToken(BaseUser user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiry = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
         var jwtId = Guid.NewGuid().ToString();
+        
+        var roles = await userManager.GetRolesAsync(user);
+        var claimsWithRoles = roles.Select(x => new Claim(ClaimTypes.Role, x));
 
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Jti, jwtId),
+            new Claim("user_id", user.Id.ToString()),
+            new Claim("tenant_id", user.InstitutionId.ToString()),
             new Claim("fullName", user.FullName),
             new Claim("institutionId", user.InstitutionId.ToString())
-        };
+        }.Union(claimsWithRoles);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,

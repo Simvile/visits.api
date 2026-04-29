@@ -10,7 +10,12 @@ public static class UserFactory
         {
             Id = Guid.NewGuid(),
             Email = "test@test.com",
-            FullName = "Test User"
+            FullName = "Test User",
+            
+            CreatedAt = DateTime.Now,
+            CreatedBy = "Test",
+            UpdatedAt = DateTime.Now,
+            UpdatedBy = "Test",
         };
     }
 }
