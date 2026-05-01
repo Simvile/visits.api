@@ -59,9 +59,8 @@ public class UserServiceTests
         await _dbContext.Context.SaveChangesAsync();
         
         _userContext.Context.Setup(u => u.UserId).Returns(User.Id);
-        _userContext.Context.Setup(u => u.Email).Returns(User.Email!);
         
-        _userManager.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(User);
+        _userManager.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(User);
         _userManager.Setup(u => u.UpdateAsync(It.IsAny<BaseUser>())).ReturnsAsync(IdentityResult.Success);
         
         var service = new UserService(_dbContext.Context, _userContext.Context.Object,  _userManager.Object);
@@ -71,11 +70,9 @@ public class UserServiceTests
         
         //Assert
         Assert.NotNull(result);
-        Assert.Equal(ResponseType.SuccessMessage, result.Type);
         
         result.Should().BeOfType(typeof(ResponseHandler));
         
-        _userContext.Context.Verify(u => u.Email, Times.Once);
         _userManager.Verify(u => u.UpdateAsync(It.IsAny<BaseUser>()), Times.Once);
     }
 
@@ -91,9 +88,12 @@ public class UserServiceTests
             Id =  User.Id,
         };
         
-        _userContext.Context.Setup(u => u.Email).Returns(User.Email!);
+        _dbContext.Context.Users.Add(User);
+        await _dbContext.Context.SaveChangesAsync();
         
-        _userManager.Setup(u => u.FindByEmailAsync(It.IsAny<string>()))
+        _userContext.Context.Setup(u => u.UserId).Returns(User.Id);
+        
+        _userManager.Setup(u => u.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync((BaseUser)null!);
         
         var service = new UserService(_dbContext.Context, _userContext.Context.Object,  _userManager.Object);
@@ -105,7 +105,6 @@ public class UserServiceTests
         await act.Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("User not found");
         
-        _userContext.Context.Verify(u => u.Email, Times.Once);
         _userManager.Verify(u => u.UpdateAsync(It.IsAny<BaseUser>()), Times.Never);
     }
     

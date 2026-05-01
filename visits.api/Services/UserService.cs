@@ -34,11 +34,12 @@ public class UserService(AppDbContext context, IUserContext userContext, UserMan
         var responseHandler = new ResponseHandler();
         
         // let's get the user
-        var user = await userManagerObject.FindByEmailAsync(userContext.Email);
+        var user = await userManagerObject.FindByIdAsync(userProfile.Id.ToString());
         
         if (user is null)
             throw new InvalidOperationException("User not found");
         
+        user.UserName = userProfile.Username;
         user.FullName = userProfile.Fullname;
         user.Email = userProfile.Email;
         user.PhoneNumber = userProfile.PhoneNumber;

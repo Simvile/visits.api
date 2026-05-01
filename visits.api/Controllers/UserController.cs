@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using visits.api.DTOs;
 using visits.api.Interfaces;
+using visits.api.Utils;
 
 namespace visits.api.Controllers
 {
@@ -29,6 +30,15 @@ namespace visits.api.Controllers
         public async Task<IActionResult> GetUserById(Guid guid)
         {
             return Ok(await userService.GetUserById(guid));
+        }
+        
+        [HttpPost("SaveUserProfile")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseHandler), 200)]
+        public async Task<IActionResult> SaveUserProfile([FromBody] UserProfile guid)
+        {
+            return Ok(await userService.SaveUserProfileAsync(guid));
         }
     }
 }
