@@ -19,7 +19,16 @@ namespace visits.api.Controllers
             if(!ModelState.IsValid)
                 return BadRequest();
 
-            return Ok(await userService.GetUserProfileAsync());
+            return Ok(await userService.GetMyUserProfileAsync());
+        }
+
+        [HttpGet("GetUserById")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<UserProfile>), 200)]
+        public async Task<IActionResult> GetUserById(Guid guid)
+        {
+            return Ok(await userService.GetUserById(guid));
         }
     }
 }
