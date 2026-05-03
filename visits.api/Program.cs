@@ -10,6 +10,7 @@ using visits.api.Configurations;
 using visits.api.Data;
 using visits.api.Data.Seeders;
 using visits.api.Interfaces;
+using visits.api.Manager;
 using visits.api.Services;
 using visits.models.Base;
 
@@ -73,7 +74,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContextService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IInstitutionService, InstitutionService>();
+builder.Services.AddScoped<IClassificationValueService, ClassificationValueService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
+builder.Services.AddManagerConfigurations();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
