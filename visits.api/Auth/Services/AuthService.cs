@@ -129,7 +129,7 @@ public class AuthService( UserManager<BaseUser> userManager, AppDbContext contex
     #region Refresh Token
     public async Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
-        // Validate the expired JWT
+        // IsValidate the expired JWT
         var principal = GetPrincipalFromExpiredToken(request.AccessToken);
         var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new UnauthorizedAccessException("Invalid access token.");
